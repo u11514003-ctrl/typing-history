@@ -1,1 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>英打挑戰｜任務四</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, "Microsoft JhengHei", sans-serif;
+    background: linear-gradient(135deg, #dff3ff, #f8e4f4, #fff1d6);
+    color: #46527a;
+}
+
+/* 整個遊戲 */
+.game {
+    width: 95%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+/* 標題區 */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 42px;
+    color: #6576d8;
+    text-shadow: 2px 3px 0 white;
+}
+
+header p {
+    margin: 8px 0;
+    font-size: 17px;
+    color: #68739a;
+}
+
+/* 分數區 */
+.info {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    min-width: 130px;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.85);
+    border: 3px solid white;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(80,90,140,0.15);
+}
+
+.info-box span {
+    display: block;
+    font-size: 13px;
+    color: #7c86a8;
+}
+
+.info-box strong {
+    display: block;
+    font-size: 25px;
+    margin-top: 3px;
+}
+
+/* 遊戲區 */
+#gameArea {
+    position: relative;
+    height: 560px;
+    overflow: hidden;
+
+    border: 5px solid white;
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #9ed5ff 0%,
+            #c9e5ff 55%,
+            #e7dcf7 100%
+        );
+
+    box-shadow:
+        0 15px 35px rgba(80,90,140,0.25);
+}
+
+/* 雲朵 */
+.cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+}
+
+.cloud1 {
+    width: 180px;
+    height: 60px;
+    top: 50px;
+    left: 30px;
+}
+
+.cloud2 {
+    width: 220px;
+    height: 70px;
+    top: 110px;
+    right: 20px;
+}
+
+.cloud3 {
+    width: 140px;
+    height: 50px;
+    bottom: 90px;
+    left: 100px;
+}
+
+/* 掉落字母 */
+.letter {
+    position: absolute;
+
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 20px;
+
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+
+    border: 4px solid rgba(255,255,255,0.8);
+
+    box-shadow:
+        0 8px 15px rgba(70,80,130,0.3),
+        inset 0 0 12px rgba(255,255,255,0.5);
+
+    text-shadow: 1px 2px 3px rgba(50,60,100,0.3);
+
+    z-index: 5;
+}
+
+/* 底部線 */
+.bottom-line {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 55px;
+
+    border-top: 4px dashed white;
+
+    z-index: 2;
+}
+
+/* 地面 */
+.ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 55px;
+
+    background: rgba(255,255,255,0.35);
+}
+
+/* 按鈕 */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    padding: 13px 28px;
+
+    border-radius: 16px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 15px rgba(70,80,130,0.2);
+}
+
+.start {
+    background: #ff8fab;
+    color: white;
+}
+
+.pause {
+    background: #91aaf2;
+    color: white;
+}
+
+.reset {
+    background: white;
+    color: #65719a;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+/* 鍵盤提示 */
+.keyboard {
+    background: rgba(255,255,255,0.75);
+    border: 3px solid white;
+
+    border-radius: 22px;
+
+    padding: 15px;
+
+    text-align: center;
+}
+
+.keyboard-title {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.keys {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.key {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 10px;
+
+    background: #edf1ff;
+    border: 2px solid #cbd5ff;
+
+    color: #596aa8;
+    font-weight: bold;
+}
+
+/* 說明 */
+.tip {
+    text-align: center;
+    margin-top: 12px;
+    color: #707a9d;
+}
+
+/* 命中動畫 */
+.hit {
+    animation: hitAnimation 0.2s ease;
+}
+
+@keyframes hitAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* 手機 */
+@media (max-width: 650px) {
+
+    header h1 {
+        font-size: 32px;
+    }
+
+    #gameArea {
+        height: 470px;
+    }
+
+    .letter {
+        width: 52px;
+        height: 52px;
+        font-size: 25px;
+    }
+
+    .info-box {
+        min-width: 100px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <header>
+        <h1>⌨️ 英打挑戰</h1>
+        <p>按下正確的英文字母，讓它消失並獲得分數！</p>
+        <p>字母會越掉越快，加油！</p>
+    </header>
+
+
+    <!-- 分數 -->
+    <div class="info">
+
+        <div class="info-box">
+            <span>⭐ 分數</span>
+            <strong id="score">0</strong>
+        </div>
+
+        <div class="info-box">
+            <span>❌ 漏掉</span>
+            <strong id="miss">0</strong>
+        </div>
+
+        <div class="info-box">
+            <span>⚡ 速度</span>
+            <strong id="speed">1.0x</strong>
+        </div>
+
+    </div>
+
+
+    <!-- 遊戲區 -->
+    <div id="gameArea">
+
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+
+        <div class="bottom-line"></div>
+        <div class="ground"></div>
+
+    </div>
+
+
+    <!-- 控制按鈕 -->
+    <div class="buttons">
+
+        <button class="start" id="startButton">
+            ▶ 開始遊戲
+        </button>
+
+        <button class="pause" id="pauseButton">
+            ⏸ 暫停
+        </button>
+
+        <button class="reset" id="resetButton">
+            🔄 重新開始
+        </button>
+
+    </div>
+
+
+    <!-- 鍵盤 -->
+    <div class="keyboard">
+
+        <div class="keyboard-title">
+            ⌨️ 使用電腦鍵盤輸入英文字母
+        </div>
+
+        <div class="keys" id="keys"></div>
+
+    </div>
+
+    <div class="tip">
+        💡 按對字母 → 字母消失並加分　｜　按錯 → 沒有反應
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   基本設定
+========================= */
+
+const gameArea = document.getElementById("gameArea");
+
+const scoreText = document.getElementById("score");
+const missText = document.getElementById("miss");
+const speedText = document.getElementById("speed");
+
+const startButton = document.getElementById("startButton");
+const pauseButton = document.getElementById("pauseButton");
+const resetButton = document.getElementById("resetButton");
+
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+const colors = [
+    "#ff8fab",
+    "#ffb86b",
+    "#7ac7c4",
+    "#8fa8ff",
+    "#b08cff",
+    "#78c091"
+];
+
+
+/* =========================
+   遊戲資料
+========================= */
+
+let score = 0;
+let miss = 0;
+
+let running = false;
+let paused = false;
+
+let fallingLetters = [];
+
+let lastTime = 0;
+let spawnTimer = 0;
+
+
+/* =========================
+   產生鍵盤
+========================= */
+
+const keys = document.getElementById("keys");
+
+letters.forEach(function(letter) {
+
+    const key = document.createElement("div");
+
+    key.className = "key";
+
+    key.textContent = letter;
+
+    keys.appendChild(key);
+
+});
+
+
+/* =========================
+   更新畫面數值
+========================= */
+
+function updateInfo() {
+
+    scoreText.textContent = score;
+
+    missText.textContent = miss;
+
+    /*
+       每答對 5 個，
+       速度增加
+    */
+
+    const speed = 1 + Math.floor(score / 5) * 0.25;
+
+    speedText.textContent = speed.toFixed(2) + "x";
+}
+
+
+/* =========================
+   產生掉落字母
+========================= */
+
+function createLetter() {
+
+    if (!running || paused) {
+        return;
+    }
+
+    const letter = document.createElement("div");
+
+    letter.className = "letter";
+
+    const randomLetter =
+        letters[Math.floor(Math.random() * letters.length)];
+
+    letter.textContent = randomLetter;
+
+    letter.dataset.letter = randomLetter;
+
+
+    /* 隨機顏色 */
+
+    const color =
+        colors[Math.floor(Math.random() * colors.length)];
+
+    letter.style.background = color;
+
+
+    /* 隨機水平位置 */
+
+    const maxX = gameArea.clientWidth - 80;
+
+    const x = Math.random() * maxX;
+
+    letter.style.left = x + "px";
+
+    letter.style.top = "-80px";
+
+
+    gameArea.appendChild(letter);
+
+
+    fallingLetters.push({
+
+        element: letter,
+
+        letter: randomLetter,
+
+        y: -80
+
+    });
+
+}
+
+
+/* =========================
+   移除字母
+========================= */
+
+function removeLetter(item, correct) {
+
+    if (!item.element.parentNode) {
+        return;
+    }
+
+
+    if (correct) {
+
+        score++;
+
+        item.element.classList.add("hit");
+
+        setTimeout(function() {
+
+            if (item.element.parentNode) {
+                item.element.remove();
+            }
+
+        }, 150);
+
+    }
+
+    else {
+
+        miss++;
+
+        item.element.remove();
+
+    }
+
+
+    fallingLetters =
+        fallingLetters.filter(function(x) {
+
+            return x !== item;
+
+        });
+
+
+    updateInfo();
+
+}
+
+
+/* =========================
+   遊戲動畫
+========================= */
+
+function gameLoop(time) {
+
+    requestAnimationFrame(gameLoop);
+
+
+    if (!running) {
+        return;
+    }
+
+
+    if (paused) {
+        lastTime = time;
+        return;
+    }
+
+
+    if (!lastTime) {
+        lastTime = time;
+    }
+
+
+    const deltaTime =
+        Math.min(40, time - lastTime);
+
+    lastTime = time;
+
+
+    /* =========================
+       產生新字母
+    ========================= */
+
+    spawnTimer += deltaTime;
+
+
+    /*
+       分數越高，
+       產生字母越快
+    */
+
+    const spawnInterval =
+        Math.max(
+            350,
+            900 - score * 12
+        );
+
+
+    if (spawnTimer >= spawnInterval) {
+
+        spawnTimer = 0;
+
+        createLetter();
+
+    }
+
+
+    /* =========================
+       字母往下掉
+    ========================= */
+
+    const currentSpeed =
+        0.10 +
+        score * 0.005;
+
+
+    const bottom =
+        gameArea.clientHeight - 115;
+
+
+    fallingLetters
+        .slice()
+        .forEach(function(item) {
+
+            item.y +=
+                currentSpeed * deltaTime;
+
+
+            item.element.style.top =
+                item.y + "px";
+
+
+            /* 掉到底部 */
+
+            if (item.y >= bottom) {
+
+                removeLetter(item, false);
+
+            }
+
+        });
+
+}
+
+
+/* =========================
+   鍵盤輸入
+========================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        const key =
+            event.key.toUpperCase();
+
+
+        /*
+           只接受 A-Z
+        */
+
+        if (!/^[A-Z]$/.test(key)) {
+            return;
+        }
+
+
+        /*
+           防止長按一直觸發
+        */
+
+        if (event.repeat) {
+            return;
+        }
+
+
+        /*
+           找到相同字母
+        */
+
+        const target =
+            fallingLetters.find(
+                function(item) {
+
+                    return item.letter === key;
+
+                }
+            );
+
+
+        /*
+           按對才消失
+        */
+
+        if (target) {
+
+            removeLetter(target, true);
+
+        }
+
+    }
+);
+
+
+/* =========================
+   開始遊戲
+========================= */
+
+startButton.addEventListener(
+    "click",
+    function() {
+
+        if (!running) {
+
+            running = true;
+
+            paused = false;
+
+            startButton.textContent =
+                "🎮 遊戲進行中";
+
+            createLetter();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   暫停
+========================= */
+
+pauseButton.addEventListener(
+    "click",
+    function() {
+
+        if (!running) {
+            return;
+        }
+
+
+        paused = !paused;
+
+
+        if (paused) {
+
+            pauseButton.textContent =
+                "▶ 繼續";
+
+        }
+
+        else {
+
+            pauseButton.textContent =
+                "⏸ 暫停";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   重新開始
+========================= */
+
+resetButton.addEventListener(
+    "click",
+    function() {
+
+        fallingLetters.forEach(
+            function(item) {
+
+                if (item.element.parentNode) {
+                    item.element.remove();
+                }
+
+            }
+        );
+
+
+        fallingLetters = [];
+
+        score = 0;
+
+        miss = 0;
+
+        running = false;
+
+        paused = false;
+
+        spawnTimer = 0;
+
+        lastTime = 0;
+
+
+        startButton.textContent =
+            "▶ 開始遊戲";
+
+        pauseButton.textContent =
+            "⏸ 暫停";
+
+
+        updateInfo();
+
+    }
+);
+
+
+/* =========================
+   啟動動畫
+========================= */
+
+updateInfo();
+
+requestAnimationFrame(gameLoop);
+
+</script>
+
+</body>
+</html>
