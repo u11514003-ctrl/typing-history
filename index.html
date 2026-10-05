@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英打遊戲｜開發歷程</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+            background: #f5f7fb;
+            color: #333;
+        }
+        header { text-align: center; padding: 60px 20px 35px; }
+        h1 { margin: 0 0 12px; font-size: 38px; }
+        .subtitle { margin: 0; color: #666; font-size: 18px; }
+        .container { width: min(1000px, 90%); margin: 0 auto 60px; }
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .card {
+            background: white; border-radius: 18px; padding: 30px;
+            text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        }
+        .card h2 { margin-top: 0; font-size: 25px; }
+        .card p { color: #666; line-height: 1.7; }
+        .button {
+            display: inline-block; margin-top: 15px; padding: 11px 22px;
+            border-radius: 10px; background: #333; color: white; text-decoration: none;
+        }
+        .button:hover { opacity: .8; }
+        .coming { background: #eee; }
+        .coming .button { background: #999; }
+        footer { text-align: center; color: #888; padding: 20px; }
+        @media (max-width: 800px) { .cards { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>英打遊戲｜開發歷程</h1>
+        <p class="subtitle">數位科技概論｜Agentic Coding 專題</p>
+    </header>
+    <main class="container">
+        <section class="cards">
+            <div class="card">
+                <h2>版本一</h2>
+                <p>英打遊戲第一版<br>基本介面與開始按鈕</p>
+                <a class="button" href="https://u11514003-ctrl.github.io/typing-v1/" target="_blank">查看版本一</a>
+            </div>
+            <div class="card">
+                <h2>版本二</h2>
+                <p>英打遊戲第二版<br>加入鍵盤圖片與音效</p>
+                <a class="button" href="https://u11514003-ctrl.github.io/typing-v2/" target="_blank">查看版本二</a>
+            </div>
+            <div class="card coming">
+                <h2>版本三</h2>
+                <p>更完整的英打遊戲<br>Coming Soon</p>
+                <a class="button" href="coming-soon.html">Coming Soon</a>
+            </div>
+        </section>
+    </main>
+    <footer>© 2026 英打遊戲開發歷程</footer>
+</body>
+</html>
